@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_meal_card.html" import meal_card, ticket %}
+{% block title %}{{ _('Scenarios') }}{% endblock %}
+{% block content %}
+<h1>{{ _('Same rules, different people, different contexts') }}</h1>
+<p class="lede">{{ _('The engine runs live on the evaluation scenarios using the profiles, context values and rules stored in SQLite. Nothing here is written to the history. Each scenario is shown in the layout its own context produces.') }}</p>
+
+<div class="scenarios">
+  {% for row in rows %}
+  {% set r = row.result %}
+  <section class="scenario layout-{{ r.ui.layout }} detail-{{ r.ui.card_detail }} media-{{ r.ui.media }}">
+    <header class="scenario-head">
+      <h2>{{ _(row.sc.title) }}</h2>
+      <p class="scenario-who">{{ avatar_img(row.user, 32) }} <b>{{ row.user.name }}</b>, {{ row.user.dietary_goal|label }}. {{ _('Expected:') }} {{ _(row.sc.expected) }}.</p>
+    </header>
+    {{ ticket(r, row.ctx, row.user, compact=True) }}
+    <div class="scenario-frame frame-{{ row.ctx.device_type }}">
+      <div class="meals">
+        {% for item in r.ranked[:3] %}{{ meal_card(item, r.ui, False) }}{% endfor %}
+      </div>
+    </div>
+    <details class="scenario-rules"><summary>{{ _('{n} rules applied', n=r.fired|length) }}</summary>
+      <ul>{% for f in r.fired %}<li><code>{{ f.name }}</code></li>{% endfor %}</ul>
+    </details>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

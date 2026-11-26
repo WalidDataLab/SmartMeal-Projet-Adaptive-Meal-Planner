@@ -1,0 +1,263 @@
+[
+  {
+    "id": 8,
+    "name": "Grilled Chicken Quinoa Bowl",
+    "category": "lunch",
+    "ingredients": [
+      "chicken breast",
+      "quinoa",
+      "cucumber",
+      "cherry tomatoes",
+      "tahini",
+      "lemon"
+    ],
+    "prep_time": 25,
+    "vegetarian": false,
+    "difficulty": "medium",
+    "dietary_tags": [
+      "balanced",
+      "gluten_free",
+      "dairy_free"
+    ],
+    "description": "Grilled chicken over fluffy quinoa with crunchy vegetables and a lemon-tahini dressing.",
+    "image": "meals/meal_08.svg",
+    "cost_eur": 7.2,
+    "nutrition": {
+      "calories_kcal": 560,
+      "protein_g": 42,
+      "carbs_g": 50,
+      "sugar_g": 5,
+      "fat_g": 20,
+      "sat_fat_g": 3,
+      "fiber_g": 7,
+      "salt_g": 1.1,
+      "cholesterol_mg": 105
+    },
+    "allergens": [
+      "sesame"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Chickpea & Vegetable Salad",
+    "category": "lunch",
+    "ingredients": [
+      "chickpeas",
+      "cucumber",
+      "tomato",
+      "red onion",
+      "parsley",
+      "olive oil"
+    ],
+    "prep_time": 10,
+    "vegetarian": true,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "veggie_rich",
+      "balanced",
+      "vegan",
+      "gluten_free",
+      "dairy_free",
+      "light"
+    ],
+    "description": "A fresh, crunchy salad of chickpeas, cucumber, tomato and herbs.",
+    "image": "meals/meal_09.svg",
+    "cost_eur": 3.0,
+    "nutrition": {
+      "calories_kcal": 380,
+      "protein_g": 14,
+      "carbs_g": 42,
+      "sugar_g": 7,
+      "fat_g": 17,
+      "sat_fat_g": 2.3,
+      "fiber_g": 12,
+      "salt_g": 0.9,
+      "cholesterol_mg": 0
+    },
+    "allergens": []
+  },
+  {
+    "id": 10,
+    "name": "Tuna & Sweetcorn Wrap",
+    "category": "lunch",
+    "ingredients": [
+      "tortilla wrap",
+      "canned tuna",
+      "sweetcorn",
+      "lettuce",
+      "yogurt dressing"
+    ],
+    "prep_time": 8,
+    "vegetarian": false,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "fish"
+    ],
+    "description": "A quick wrap filled with tuna, sweetcorn and crisp lettuce.",
+    "image": "meals/meal_10.svg",
+    "cost_eur": 3.7,
+    "nutrition": {
+      "calories_kcal": 450,
+      "protein_g": 32,
+      "carbs_g": 45,
+      "sugar_g": 6,
+      "fat_g": 14,
+      "sat_fat_g": 3,
+      "fiber_g": 5,
+      "salt_g": 2.0,
+      "cholesterol_mg": 45
+    },
+    "allergens": [
+      "gluten",
+      "fish",
+      "dairy"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Red Lentil Soup",
+    "category": "lunch",
+    "ingredients": [
+      "red lentils",
+      "carrot",
+      "onion",
+      "cumin",
+      "vegetable stock"
+    ],
+    "prep_time": 30,
+    "vegetarian": true,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "balanced",
+      "high_fiber",
+      "vegan",
+      "gluten_free",
+      "dairy_free"
+    ],
+    "description": "A warming, budget-friendly soup of red lentils, carrot and cumin.",
+    "image": "meals/meal_11.svg",
+    "cost_eur": 1.9,
+    "nutrition": {
+      "calories_kcal": 340,
+      "protein_g": 18,
+      "carbs_g": 52,
+      "sugar_g": 7,
+      "fat_g": 6,
+      "sat_fat_g": 1,
+      "fiber_g": 11,
+      "salt_g": 1.4,
+      "cholesterol_mg": 0
+    },
+    "allergens": []
+  },
+  {
+    "id": 12,
+    "name": "Turkey & Hummus Sandwich",
+    "category": "lunch",
+    "ingredients": [
+      "wholegrain bread",
+      "turkey slices",
+      "hummus",
+      "spinach",
+      "tomato"
+    ],
+    "prep_time": 7,
+    "vegetarian": false,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "balanced",
+      "dairy_free"
+    ],
+    "description": "Wholegrain bread with sliced turkey, hummus and fresh vegetables.",
+    "image": "meals/meal_12.svg",
+    "cost_eur": 5.6,
+    "nutrition": {
+      "calories_kcal": 430,
+      "protein_g": 30,
+      "carbs_g": 44,
+      "sugar_g": 5,
+      "fat_g": 14,
+      "sat_fat_g": 2.5,
+      "fiber_g": 8,
+      "salt_g": 2.3,
+      "cholesterol_mg": 45
+    },
+    "allergens": [
+      "gluten",
+      "sesame"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Caprese Pasta Salad",
+    "category": "lunch",
+    "ingredients": [
+      "pasta",
+      "mozzarella",
+      "cherry tomatoes",
+      "basil",
+      "pesto"
+    ],
+    "prep_time": 15,
+    "vegetarian": true,
+    "difficulty": "easy",
+    "dietary_tags": [],
+    "description": "Cold pasta tossed with mozzarella, tomatoes, basil and pesto.",
+    "image": "meals/meal_13.svg",
+    "cost_eur": 5.8,
+    "nutrition": {
+      "calories_kcal": 560,
+      "protein_g": 19,
+      "carbs_g": 62,
+      "sugar_g": 6,
+      "fat_g": 25,
+      "sat_fat_g": 9,
+      "fiber_g": 4,
+      "salt_g": 1.3,
+      "cholesterol_mg": 40
+    },
+    "allergens": [
+      "gluten",
+      "dairy",
+      "nuts"
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Sweet Potato & Black Bean Bowl",
+    "category": "lunch",
+    "ingredients": [
+      "sweet potato",
+      "black beans",
+      "brown rice",
+      "avocado",
+      "lime"
+    ],
+    "prep_time": 35,
+    "vegetarian": true,
+    "difficulty": "medium",
+    "dietary_tags": [
+      "veggie_rich",
+      "balanced",
+      "high_fiber",
+      "vegan",
+      "gluten_free",
+      "dairy_free"
+    ],
+    "description": "Roasted sweet potato with black beans, rice, avocado and lime.",
+    "image": "meals/meal_14.svg",
+    "cost_eur": 3.7,
+    "nutrition": {
+      "calories_kcal": 520,
+      "protein_g": 16,
+      "carbs_g": 88,
+      "sugar_g": 10,
+      "fat_g": 12,
+      "sat_fat_g": 2,
+      "fiber_g": 17,
+      "salt_g": 0.8,
+      "cholesterol_mg": 0
+    },
+    "allergens": []
+  }
+]

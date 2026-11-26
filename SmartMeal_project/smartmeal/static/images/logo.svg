@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SmartMeal">
+  <circle cx="32" cy="32" r="30" fill="#2E6B4F"/>
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#F6F8F5" stroke-width="2.5" opacity=".9"/>
+  <!-- fork -->
+  <g fill="#F6F8F5">
+    <rect x="22.2" y="31" width="3.6" height="19" rx="1.8"/>
+    <path d="M18.5 14 v10.5 q0 6 5.5 7.5 q5.5 -1.5 5.5 -7.5 V14 h-2.2 v9.5 h-1.8 V14 h-3 v9.5 h-1.8 V14z"/>
+  </g>
+  <!-- leaf (fresh food) with a small spark (adaptation) -->
+  <path d="M33 47 C 31 34 37 22 48 17 C 51 30 46 42 33 47Z" fill="#E9A92F"/>
+  <path d="M34 45 C 37 37 41 29 46.5 21" stroke="#2E6B4F" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M50.5 37.5 l1.2 2.8 2.8 1.2 -2.8 1.2 -1.2 2.8 -1.2 -2.8 -2.8 -1.2 2.8 -1.2z" fill="#F6F8F5"/>
+</svg>

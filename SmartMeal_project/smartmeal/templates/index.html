@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Start') }}{% endblock %}
+{% block content %}
+<section class="hero">
+  <img class="hero-logo" src="{{ url_for('static', filename='images/logo.svg') }}" alt="" width="64" height="64">
+  <h1>{{ _('What should you eat, given the time you have right now?') }}</h1>
+  <p class="lede">{{ _('Pick a profile, tell SmartMeal about your situation, and get a meal plan that adapts to your goal, your habits, your device and your schedule.') }}</p>
+</section>
+
+<form method="post" class="start" id="startForm" data-fresh="{{ 1 if fresh else 0 }}"
+      data-detected="{{ _('Detected:') }}" data-undetected="{{ _('Could not be detected; choose manually.') }}"
+      data-last="{{ _('your last session used') }}">
+  <fieldset class="panel">
+    <legend>{{ _('Who is cooking?') }}</legend>
+    <div class="people">
+      {% for u in users %}
+      <label class="person">
+        <input type="radio" name="user_id" value="{{ u.id }}" required
+               {% if (selected and u.id == selected) or (not selected and loop.first) %}checked{% endif %}>
+        <span class="person-card">
+          {{ avatar_img(u, 56) }}
+          <span class="person-name">{{ u.name }}</span>
+          <span class="person-meta">{{ u.dietary_goal|label }}, {{ u.cooking_level|label }}</span>
+          {% set notes = u.restrictions + u.health_conditions + u.allergies %}
+          {% if notes %}<span class="person-meta">{{ notes|map('label')|join(', ') }}</span>{% endif %}
+          {% set ns = u.performance.sessions_count or 0 %}{% set nm = u.performance.meals_selected or 0 %}
+          <span class="person-stat">{{ _('{n} sessions, {m} meals chosen', n=ns, m=nm) }}</span>
+        </span>
+      </label>
+      {% endfor %}
+      <a class="person person-new" href="{{ url_for('new_profile') }}">
+        <span class="person-card"><span class="plus" aria-hidden="true">+</span><span class="person-name">{{ _('New profile') }}</span></span>
+      </a>
+    </div>
+  </fieldset>
+
+  <fieldset class="panel">
+    <legend>{{ _('Your situation right now') }}</legend>
+    <div class="field">
+      <label for="available_time">{{ _('Time available to cook:') }} <output id="timeOut" for="available_time">{{ defaults.available_time }}</output> {{ _('min') }}</label>
+      <input type="range" id="available_time" name="available_time" min="5" max="90" step="5" value="{{ defaults.available_time }}">
+    </div>
+
+    <div class="field">
+      <span class="field-label" id="budgetLbl">{{ _('Budget for this meal') }}</span>
+      <div class="segmented" role="radiogroup" aria-labelledby="budgetLbl">
+        {% for b in choices.budgets %}
+        <label><input type="radio" name="meal_budget" value="{{ b }}" {% if defaults.meal_budget == b %}checked{% endif %}><span>{{ b|label }}</span></label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="field-label" id="momentLbl">{{ _('Which meal?') }}</span>
+      <div class="segmented" role="radiogroup" aria-labelledby="momentLbl">
+        {% for m in choices.moments %}
+        <label><input type="radio" name="meal_moment" value="{{ m }}" {% if defaults.meal_moment == m %}checked{% endif %}><span>{{ m|label }}</span></label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="device_type">{{ _('Device') }}</label>
+        <select id="device_type" name="device_type" data-autodetect="device">
+          {% for d in choices.devices %}<option value="{{ d }}" {% if defaults.device_type == d %}selected{% endif %}>{{ d|label }}</option>{% endfor %}
+        </select>
+        <small class="hint" data-hint="device"></small>
+      </div>
+      <div class="field">
+        <label for="connection_quality">{{ _('Connection') }}</label>
+        <select id="connection_quality" name="connection_quality" data-autodetect="connection">
+          {% for c in choices.connections %}<option value="{{ c }}" {% if defaults.connection_quality == c %}selected{% endif %}>{{ c|label }}</option>{% endfor %}
+        </select>
+        <small class="hint" data-hint="connection"></small>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">{{ _('Build my meal plan') }}</button>
+  </fieldset>
+</form>
+{% endblock %}

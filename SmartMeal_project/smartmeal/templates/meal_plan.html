@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_meal_card.html" import meal_card, ticket %}
+{% block title %}{{ _('My plan') }}{% endblock %}
+{% block content %}
+<div class="plan-head">
+  <div>
+    <h1>{{ _('{name}, here is your plan', name=current_user.name) }}</h1>
+    <p class="lede">{{ _('{n} meals fit your {t}-minute window, ranked by your profile, habits and context.', n=total, t=current_ctx.available_time) }}</p>
+  </div>
+</div>
+
+{# Context can be changed during the session: the same row of the Context table is updated #}
+<form class="ctxbar" method="post" action="{{ url_for('update_context') }}" data-autosubmit>
+  <input type="hidden" name="next" value="{{ url_for('plan') }}">
+  <label>{{ _('Time') }}
+    <select name="available_time">
+      {% for t in [5, 10, 15, 20, 30, 45, 60, 90] %}<option value="{{ t }}" {% if current_ctx.available_time == t %}selected{% endif %}>{{ t }} {{ _('min') }}</option>{% endfor %}
+      {% if current_ctx.available_time not in [5, 10, 15, 20, 30, 45, 60, 90] %}<option value="{{ current_ctx.available_time }}" selected>{{ current_ctx.available_time }} {{ _('min') }}</option>{% endif %}
+    </select></label>
+  <label>{{ _('Budget') }}
+    <select name="meal_budget">{% for b in choices.budgets %}<option value="{{ b }}" {% if current_ctx.meal_budget == b %}selected{% endif %}>{{ b|label }}</option>{% endfor %}</select></label>
+  <label>{{ _('Meal') }}
+    <select name="meal_moment">{% for m in choices.moments %}<option value="{{ m }}" {% if current_ctx.meal_moment == m %}selected{% endif %}>{{ m|label }}</option>{% endfor %}</select></label>
+  <label>{{ _('Device') }}
+    <select name="device_type">{% for d in choices.devices %}<option value="{{ d }}" {% if current_ctx.device_type == d %}selected{% endif %}>{{ d|label }}</option>{% endfor %}</select></label>
+  <label>{{ _('Connection') }}
+    <select name="connection_quality">{% for c in choices.connections %}<option value="{{ c }}" {% if current_ctx.connection_quality == c %}selected{% endif %}>{{ c|label }}</option>{% endfor %}</select></label>
+  <noscript><button class="btn btn-sm" type="submit">{{ _('Update') }}</button></noscript>
+</form>
+
+{% if not result.ui.show_images %}
+  <div class="notice notice-data">{{ _('Low-data mode: images are switched off and fewer meals load per page because your connection is slow.') }}</div>
+{% endif %}
+{% if result.ui.show_tips %}
+  <div class="notice notice-tip">{{ _('New here? Choose or save meals you like: SmartMeal learns from what you pick and adjusts future plans. Change the bar above when your situation changes.') }}</div>
+{% endif %}
+{% if result.relaxed_time %}
+  <div class="notice notice-warn">{{ _('No meal fits in {t} minutes with your other constraints, so these are the quickest available options.', t=current_ctx.available_time) }}</div>
+{% endif %}
+
+<div class="plan">
+  <section class="meals" aria-label="{{ _('Recommended meals') }}">
+    {% for item in meals %}
+      {{ meal_card(item, result.ui, True, saved_ids) }}
+    {% else %}
+      <p class="empty">{{ _('No meal matches all your constraints. Try more time, another meal or a different budget.') }}</p>
+    {% endfor %}
+    {% if pages > 1 %}
+    <nav class="pager" aria-label="{{ _('Pages') }}">
+      {% if page > 1 %}<a class="btn btn-ghost btn-sm" href="{{ url_for('plan', page=page-1) }}">{{ _('Previous') }}</a>{% endif %}
+      <span>{{ _('Page {p} of {n}', p=page, n=pages) }}</span>
+      {% if page < pages %}<a class="btn btn-ghost btn-sm" href="{{ url_for('plan', page=page+1) }}">{{ _('More meals') }}</a>{% endif %}
+    </nav>
+    {% endif %}
+  </section>
+  {{ ticket(result, current_ctx, current_user, compact=(result.ui.layout == 'single_column')) }}
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Dashboard') }}{% endblock %}
+{% macro hbars(rows, empty, kind) %}
+  {% set maxv = (rows|map(attribute='value')|max) if rows else 1 %}
+  {% if rows %}
+  <ul class="hbars">
+    {% for r in rows %}
+    <li><span class="hb-label">{{ r.label|label if kind == 'cat' else meal_name_by_id(r.meal_id, r.label) }}</span>
+      <span class="hb-track"><span class="hb-fill" style="width: {{ (r.value / maxv * 100)|round(1) }}%"></span></span>
+      <span class="hb-val">{{ r.value }}</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}<p class="empty">{{ empty }}</p>{% endif %}
+{% endmacro %}
+{% block content %}
+{% set p = user.performance %}
+<div class="dash-head">
+  <div class="profile-head">{{ avatar_img(user, 56) }}<h1>{{ _("{name}'s activity", name=user.name) }}</h1></div>
+  <form method="get" class="inline-form">
+    <label for="uid">{{ _('Profile') }}</label>
+    <select id="uid" name="user_id" data-autosubmit-select>
+      {% for u in users %}<option value="{{ u.id }}" {% if u.id == user.id %}selected{% endif %}>{{ u.name }}</option>{% endfor %}
+    </select>
+    <noscript><button class="btn btn-sm">{{ _('Show') }}</button></noscript>
+  </form>
+</div>
+
+<dl class="kpis">
+  <div><dt>{{ _('Meals viewed') }}</dt><dd>{{ p.meals_viewed }}</dd></div>
+  <div><dt>{{ _('Meals chosen') }}</dt><dd>{{ p.meals_selected }}</dd></div>
+  <div><dt>{{ _('Saved') }}</dt><dd>{{ p.meals_saved }}</dd></div>
+  <div><dt>{{ _('Recommendations opened') }}</dt><dd>{{ (p.recommendation_ctr * 100)|round(1) }}%</dd></div>
+  <div><dt>{{ _('Sessions') }}</dt><dd>{{ p.sessions_count }}</dd></div>
+  <div><dt>{{ _('Average session') }}</dt><dd>{{ p.avg_session_minutes }} {{ _('min') }}</dd></div>
+</dl>
+
+<div class="dash-grid">
+  <section class="panel">
+    <h2>{{ _('Activity, last 14 days') }}</h2>
+    {% set maxd = [activity|map(attribute='viewed')|max, activity|map(attribute='selected')|max, activity|map(attribute='saved')|max, 1]|max %}
+    <svg class="colchart" viewBox="0 0 560 200" role="img" aria-label="{{ _('Daily views, choices and saves over the last 14 days') }}" direction="ltr">
+      {% for i in range(0, 4) %}{% set y = 170 - i * 50 %}
+        <line x1="30" x2="555" y1="{{ y }}" y2="{{ y }}" class="grid"/>
+        <text x="24" y="{{ y + 4 }}" class="axis" text-anchor="end">{{ ((maxd * i / 3)|round(1))|string|replace('.0','') }}</text>
+      {% endfor %}
+      {% for d in activity %}
+        {% set x = 36 + loop.index0 * 37 %}
+        {% set hv = d.viewed / maxd * 150 %}{% set hs = d.selected / maxd * 150 %}{% set hsv = d.saved / maxd * 150 %}
+        <rect x="{{ x }}" y="{{ 170 - hv }}" width="10" height="{{ hv }}" class="s-viewed"><title>{{ d.day }}: {{ d.viewed }} {{ 'viewed'|label }}</title></rect>
+        <rect x="{{ x + 11 }}" y="{{ 170 - hs }}" width="10" height="{{ hs }}" class="s-selected"><title>{{ d.day }}: {{ d.selected }} {{ 'selected'|label }}</title></rect>
+        <rect x="{{ x + 22 }}" y="{{ 170 - hsv }}" width="10" height="{{ hsv }}" class="s-saved"><title>{{ d.day }}: {{ d.saved }} {{ 'saved'|label }}</title></rect>
+        {% if loop.index0 % 2 == 0 %}<text x="{{ x + 16 }}" y="188" class="axis" text-anchor="middle">{{ d.day[5:] }}</text>{% endif %}
+      {% endfor %}
+    </svg>
+    <p class="legend"><span class="key s-viewed"></span>{{ 'viewed'|label }} <span class="key s-selected"></span>{{ 'selected'|label }} <span class="key s-saved"></span>{{ 'saved'|label }}</p>
+  </section>
+
+  <section class="panel">
+    <h2>{{ _('Most viewed categories') }}</h2>
+    {{ hbars(viewed_cats, _('No meals viewed yet.'), 'cat') }}
+    <h2>{{ _('Most chosen categories') }}</h2>
+    {{ hbars(selected_cats, _('No meals chosen yet.'), 'cat') }}
+  </section>
+
+  <section class="panel">
+    <h2>{{ _('Most chosen meals') }}</h2>
+    {{ hbars(top_selected, _('Choose a meal from your plan to see it here.'), 'meal') }}
+    <h2>{{ _('Most viewed meals') }}</h2>
+    {{ hbars(top_viewed, _('No meals viewed yet.'), 'meal') }}
+  </section>
+
+  <section class="panel">
+    <h2>{{ _('Sessions and their context') }}</h2>
+    <p class="hint">{{ _('Each row is one record of the Context table. The same person cooks in different situations.') }}</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">{{ _('Started') }}</th><th scope="col">{{ _('Device') }}</th><th scope="col">{{ _('Time') }}</th><th scope="col">{{ _('Budget') }}</th><th scope="col">{{ _('Connection') }}</th><th scope="col">{{ _('Minutes') }}</th><th scope="col">{{ _('Actions') }}</th></tr></thead>
+      <tbody>
+      {% for s in sessions %}
+        <tr><td>{{ s.started_at[:16] }}{% if s.is_active %} <span class="badge badge-live">{{ _('live') }}</span>{% endif %}</td><td>{{ s.device_type|label }}</td><td>{{ s.available_time }} {{ _('min') }}</td><td>{{ s.meal_budget|label }}</td><td>{{ s.connection_quality|label }}</td><td>{{ s.minutes }}</td><td>{{ s.interactions }}</td></tr>
+      {% else %}<tr><td colspan="7" class="empty">{{ _('No sessions yet.') }}</td></tr>{% endfor %}
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="panel">
+    <h2>{{ _('Recommendation history') }}</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">{{ _('When') }}</th><th scope="col">{{ _('Meal') }}</th><th scope="col">{{ _('Rank') }}</th><th scope="col">{{ _('Context at that time') }}</th></tr></thead>
+      <tbody>
+      {% for h in recommendations %}
+        <tr><td>{{ h.created_at[5:16] }}</td><td>{{ meal_name_by_id(h.meal_id, h.meal_name) }}</td><td>#{{ h.rank_position }}</td>
+          <td>{% if h.context %}{{ h.context.device_type|label }}, {{ h.context.available_time }} {{ _('min') }}, {{ h.context.meal_budget|label }}{% endif %}</td></tr>
+      {% else %}<tr><td colspan="4" class="empty">{{ _('Recommendations are recorded when a plan is displayed.') }}</td></tr>{% endfor %}
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="panel">
+    <h2>{{ _('Recent interactions') }}</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">{{ _('When') }}</th><th scope="col">{{ _('Action') }}</th><th scope="col">{{ _('Meal') }}</th><th scope="col">{{ _('From') }}</th></tr></thead>
+      <tbody>
+      {% for h in interactions %}
+        <tr><td>{{ h.created_at[5:16] }}</td><td><span class="act act-{{ h.interaction_type }}">{{ h.interaction_type|label }}</span></td><td>{{ meal_name_by_id(h.meal_id, h.meal_name) }}</td><td>{{ h.source|label }}</td></tr>
+      {% else %}<tr><td colspan="4" class="empty">{{ _('No interactions yet.') }}</td></tr>{% endfor %}
+      </tbody>
+    </table></div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Rules') }}{% endblock %}
+{% block content %}
+<h1>{{ _('Adaptation rules') }}</h1>
+<p class="lede">{{ _('All {n} rules are read from the rules table of backend/rules.db. Higher-priority rules are evaluated first and win interface conflicts. Boosts and filters from all applicable rules are combined.', n=rules|length) }}</p>
+<div class="table-wrap panel"><table class="rules-table">
+  <thead><tr><th scope="col">{{ _('Priority') }}</th><th scope="col">{{ _('Kind') }}</th><th scope="col">{{ _('Name') }}</th><th scope="col">{{ _('IF (condition)') }}</th><th scope="col">{{ _('THEN (adaptation)') }}</th><th scope="col">{{ _('Explanation') }}</th></tr></thead>
+  <tbody>
+  {% for r in rules %}
+    <tr class="kind-{{ r.kind }}{% if not r.active %} inactive{% endif %}">
+      <td>{{ r.priority }}</td><td><span class="kind">{{ r.kind|label }}</span></td><td><code>{{ r.name }}</code></td>
+      <td dir="ltr"><code>{{ r.condition }}</code></td><td dir="ltr"><code>{{ r.adaptation }}</code></td><td>{{ rule_text(r.name, r.explanation)|capitalize_first }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

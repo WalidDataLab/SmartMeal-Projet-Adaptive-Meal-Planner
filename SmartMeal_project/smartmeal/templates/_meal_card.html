@@ -1,0 +1,112 @@
+{# Adaptive meal card. Parameters: item (ranked result), ui (interface settings),
+   interactive (bool: the whole card opens the meal page), saved_ids (set). #}
+{% macro meal_card(item, ui, interactive=True, saved_ids=()) %}
+{% set m = item.meal %}
+<article class="meal-card cat-{{ m.category }}{% if item.top_pick %} is-top{% endif %}{% if ui.show_images %} has-media{% endif %}{% if interactive %} is-clickable{% endif %}">
+  {% if ui.show_images %}
+    <div class="meal-media">
+      <img src="{{ url_for('static', filename=meal_image(m)) }}" alt="" loading="lazy" width="400" height="300">
+    </div>
+  {% else %}
+    <div class="meal-band">{{ m.category|label }}</div>
+  {% endif %}
+  <div class="meal-body">
+    <div class="meal-top">
+      {% if item.top_pick %}<span class="badge badge-top">{{ _('Top pick for you') }}</span>{% endif %}
+      <span class="rank" title="{{ _('Adaptation score') }} {{ '%g'|format(item.score) }}">#{{ item.rank }}</span>
+    </div>
+    <h3 class="meal-name">
+      {# the link is stretched over the whole card (CSS), buttons stay clickable above it #}
+      {% if interactive %}<a class="card-link" href="{{ url_for('meal_details', meal_id=m.id, src='rec') }}">{{ meal_name(m) }}</a>{% else %}{{ meal_name(m) }}{% endif %}
+    </h3>
+    {% set n = m.nutrition %}
+    <ul class="facts">
+      <li class="fact-time">{{ m.prep_time }} {{ _('min') }}</li>
+      <li class="fact-cost cost-{{ m.cost_category }}" title="{{ _('Estimated cost per serving') }}">≈ {{ money(m.cost_eur) }}</li>
+      <li class="fact-kcal">{{ n.calories_kcal }} kcal</li>
+      {% if m.vegetarian %}<li class="fact-veg">{{ _('Vegetarian') }}</li>{% endif %}
+    </ul>
+    <dl class="macros" aria-label="{{ _('Estimated nutrition per serving') }}">
+      <div class="mac-p"><dt>{{ _('Protein') }}</dt><dd>{{ n.protein_g|round|int }} {{ _('g') }}</dd></div>
+      <div class="mac-c"><dt>{{ _('Carbs') }}</dt><dd>{{ n.carbs_g|round|int }} {{ _('g') }}</dd></div>
+      <div class="mac-f"><dt>{{ _('Fat') }}</dt><dd>{{ n.fat_g|round|int }} {{ _('g') }}</dd></div>
+      {% if ui.card_detail == 'detailed' %}<div class="mac-s"><dt>{{ _('Sugars') }}</dt><dd>{{ n.sugar_g|round|int }} {{ _('g') }}</dd></div>{% endif %}
+    </dl>
+    {% if ui.card_detail == 'detailed' %}
+      <p class="meal-desc">{{ meal_desc(m) }}</p>
+    {% endif %}
+    <p class="why"><span class="why-label">{{ _('Why this meal:') }}</span> {{ why(item) }}</p>
+    {% if item.checks %}
+      <p class="fits" title="{{ item.check_rules|map('rule_text')|join('; ') }}">{{ _('Fits your health and diet settings ({n} checks)', n=item.checks|length) }}</p>
+    {% endif %}
+    {% if ui.card_detail == 'detailed' and item.reasons|length > 2 %}
+      <details class="more-reasons"><summary>{{ _('{n} more reasons', n=item.reasons|length - 2) }}</summary>
+        <ul>{% for r in item.reason_rules[2:] %}<li>{{ rule_text(r)|capitalize_first }}</li>{% endfor %}</ul>
+      </details>
+    {% endif %}
+    {% if interactive %}
+    <div class="meal-actions">
+      <form method="post" action="{{ url_for('select_meal', meal_id=m.id) }}">
+        <input type="hidden" name="src" value="rec"><input type="hidden" name="next" value="{{ request.full_path }}">
+        <button class="btn btn-primary btn-sm" type="submit">{{ _('Choose') }}</button>
+      </form>
+      <form method="post" action="{{ url_for('save_meal', meal_id=m.id) }}">
+        <input type="hidden" name="src" value="rec"><input type="hidden" name="next" value="{{ request.full_path }}">
+        <button class="btn btn-ghost btn-sm" type="submit" aria-pressed="{{ 'true' if m.id in saved_ids else 'false' }}">{{ _('Saved') if m.id in saved_ids else _('Save') }}</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+</article>
+{% endmacro %}
+
+{# Kitchen-ticket summary of what the engine decided. #}
+{% macro ticket(result, ctx, user, compact=False) %}
+<aside class="ticket" aria-label="{{ _('How this plan was adapted') }}">
+  <div class="ticket-head">
+    <strong>{{ _('Adaptation ticket') }}</strong>
+    <span>{{ _('{n} of {total} rules applied', n=result.fired|length, total=result.fired|length + result.not_fired|length) }}</span>
+  </div>
+  <dl class="ticket-ctx">
+    <div><dt>{{ _('Profile') }}</dt><dd>{{ user.dietary_goal|label }}, {{ user.cooking_level|label }}</dd></div>
+    {% if user.metrics and user.metrics.daily_kcal_target %}<div><dt>{{ _('Est. daily energy') }}</dt><dd>{{ user.metrics.daily_kcal_target }} kcal</dd></div>{% endif %}
+    {% if user.health_conditions or user.allergies %}<div class="span2"><dt>{{ _('Health and allergies') }}</dt><dd>{{ (user.health_conditions + user.allergies)|map('label')|join(', ') }}</dd></div>{% endif %}
+    <div><dt>{{ _('Time') }}</dt><dd>{{ ctx.available_time }} {{ _('min') }}</dd></div>
+    <div><dt>{{ _('Budget') }}</dt><dd>{{ ctx.meal_budget|label }}</dd></div>
+    <div><dt>{{ _('Device') }}</dt><dd>{{ ctx.device_type|label }}</dd></div>
+    <div><dt>{{ _('Connection') }}</dt><dd>{{ ctx.connection_quality|label }}</dd></div>
+    <div><dt>{{ _('Meal') }}</dt><dd>{{ ctx.meal_moment|label }}</dd></div>
+  </dl>
+  <div class="ticket-sec">
+    <h4>{{ _('Interface') }}</h4>
+    <ul class="ui-list">
+      <li>{{ _('Layout:') }} <b>{{ result.ui.layout|label }}</b></li>
+      <li>{{ _('Meals per page:') }} <b>{{ result.ui.cards_per_page }}</b></li>
+      <li>{{ _('Cards:') }} <b>{{ result.ui.card_detail|label }}</b></li>
+      <li>{{ _('Images:') }} <b>{{ _('shown') if result.ui.show_images else _('hidden (low-data mode)') }}</b></li>
+      {% if result.ui.text_size == 'large' %}<li>{{ _('Text:') }} <b>{{ _('large') }}</b></li>{% endif %}
+    </ul>
+  </div>
+  {% if not compact %}
+  <div class="ticket-sec">
+    <h4>{{ _('Rules applied') }}</h4>
+    <ol class="rule-list">
+      {% for r in result.fired %}
+      <li class="kind-{{ r.kind }}"><code>{{ r.name }}</code><span>{{ rule_text(r.name, r.explanation)|capitalize_first }}</span></li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% if result.conflicts %}
+  <div class="ticket-sec">
+    <h4>{{ _('Conflicts resolved') }}</h4>
+    <ul class="conflicts">
+      {% for c in result.conflicts %}
+      <li><code>{{ c.setting }}</code> = {{ c.value }} ← <code>{{ c.winner }}</code> ({{ _('higher priority than') }} {{ c.overridden|join(', ') }})</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% endif %}
+  <p class="ticket-foot">{{ _('{n} meals match, {x} filtered out', n=result.ranked|length, x=result.excluded|length) }}{% if result.max_prep_time %}; {{ _('max {t} min', t=result.max_prep_time) }}{% endif %}.</p>
+</aside>
+{% endmacro %}

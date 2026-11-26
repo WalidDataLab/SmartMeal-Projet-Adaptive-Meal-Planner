@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# SmartMeal runtime databases: re-created automatically by backend/init_db.py
+SmartMeal_project/smartmeal/backend/*.db
+SmartMeal_project/smartmeal/backend/backup_*/
+
+# Archives, OS and editor files
+*.zip
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Instructor's starter project: kept locally as a reference, never published
+SmartMeal_project/original_adaptive_quiz_system/

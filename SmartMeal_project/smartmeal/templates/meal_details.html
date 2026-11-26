@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ meal_name(meal) }}{% endblock %}
+{% block content %}
+<a class="backlink" href="{{ url_for('plan') }}">{{ _('Back to my plan') }}</a>
+<article class="detail cat-{{ meal.category }}">
+  {% if result.ui.show_images %}
+    <img class="detail-img" src="{{ url_for('static', filename=meal_image(meal)) }}" alt="{{ meal_name(meal) }}" width="400" height="300">
+  {% else %}
+    <div class="meal-band detail-band">{{ meal.category|label }}, {{ _('image hidden in low-data mode') }}</div>
+  {% endif %}
+  <div class="detail-body">
+    <p class="detail-cat">{{ meal.category|label }}</p>
+    <h1>{{ meal_name(meal) }}</h1>
+    <ul class="facts facts-lg">
+      <li class="fact-time">{{ meal.prep_time }} {{ _('min') }}</li>
+      <li class="fact-cost cost-{{ meal.cost_category }}">≈ {{ money(meal.cost_eur) }} {{ _('per serving') }}</li>
+      <li class="fact-kcal">{{ meal.nutrition.calories_kcal }} kcal</li>
+      <li>{{ _('Difficulty:') }} {{ meal.difficulty|label }}</li>
+      {% if meal.vegetarian %}<li class="fact-veg">{{ _('Vegetarian') }}</li>{% endif %}
+    </ul>
+    <p>{{ meal_desc(meal) }}</p>
+
+    {% if item %}
+      <div class="why-box">
+        <p class="why"><span class="why-label">{{ _('Why this meal:') }}</span> {{ why(item) }}</p>
+        {% if item.checks %}<p class="fits">{{ item.check_rules|map('rule_text')|join('; ') }}</p>{% endif %}
+        {% if result.ui.card_detail == 'detailed' or item.breakdown|length <= 3 %}
+        <table class="breakdown">
+          <caption>{{ _('Score {s}, rank {r} in your current plan', s='%g'|format(item.score), r=item.rank) }}</caption>
+          <thead><tr><th scope="col">{{ _('Rule') }}</th><th scope="col">{{ _('Criterion') }}</th><th scope="col">{{ _('Points') }}</th></tr></thead>
+          <tbody>
+            {% for b in item.breakdown %}<tr><td><code>{{ b.rule }}</code></td><td>{{ crit(b.criterion_key, b.criterion) }}</td><td class="{{ 'neg' if b.weight < 0 }}">{{ '%+g'|format(b.weight) }}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+    {% elif excluded %}
+      <div class="notice notice-warn">{{ _('Not in your current plan:') }} {{ rule_text(excluded.rule, excluded.reason) if excluded.rule != 'fit_available_time' else _('takes {t} min, more than your {a} min available', t=meal.prep_time, a=current_ctx.available_time) }}.</div>
+    {% endif %}
+
+    <div class="meal-actions">
+      <form method="post" action="{{ url_for('select_meal', meal_id=meal.id) }}">
+        <input type="hidden" name="src" value="{{ src or 'direct' }}"><input type="hidden" name="next" value="{{ url_for('meal_details', meal_id=meal.id) }}">
+        <button class="btn btn-primary" type="submit">{{ _('Choose this meal') }}</button>
+      </form>
+      <form method="post" action="{{ url_for('save_meal', meal_id=meal.id) }}">
+        <input type="hidden" name="src" value="{{ src or 'direct' }}"><input type="hidden" name="next" value="{{ url_for('meal_details', meal_id=meal.id) }}">
+        <button class="btn btn-ghost" type="submit" aria-pressed="{{ 'true' if saved else 'false' }}">{{ _('Saved') if saved else _('Save for later') }}</button>
+      </form>
+    </div>
+
+    {% set share = meal_share[meal.category] %}
+    {% set m = current_user.metrics %}
+    <h2>{{ _('Nutrition per serving') }}</h2>
+    <table class="nutri">
+      <caption>{{ _('Estimated values') }}{% if m.daily_kcal_target %}, {{ _('compared with your estimated target for this meal ({p}% of the day)', p=(share * 100)|int) }}{% endif %}.</caption>
+      <thead><tr><th scope="col">{{ _('Nutrient') }}</th><th scope="col">{{ _('Amount') }}</th>{% if m.daily_kcal_target %}<th scope="col">{{ _('Your target for this meal') }}</th>{% endif %}</tr></thead>
+      <tbody>
+      {% for key in nutrients %}{% set lab = nutrient_labels[key] %}
+        <tr class="{{ 'sub' if lab[0].startswith('of which') }}">
+          <th scope="row">{{ _(lab[0]) }}</th>
+          <td>{{ '%g'|format(meal.nutrition[key]) }} {{ _(lab[1]) }}</td>
+          {% if m.daily_kcal_target %}<td>
+            {% if key == 'calories_kcal' %}≈ {{ (m.daily_kcal_target * share)|round|int }} kcal
+            {% elif key == 'protein_g' and m.protein_target_g %}≈ {{ (m.protein_target_g * share)|round|int }} {{ _('g') }}
+            {% endif %}</td>{% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p class="hint">{{ _('Allergens:') }} {{ meal.allergens|map('label')|join(', ') if meal.allergens else _('none of the 9 tracked allergens') }}.
+      {{ _('Values are estimates for a typical serving, not medical or dietary advice.') }}</p>
+
+    <h2>{{ _('Ingredients') }}</h2>
+    <ul class="ingredients">{% for i in meal.ingredients %}<li>{{ ingredient(i)|capitalize_first }}</li>{% endfor %}</ul>
+    {% if meal.dietary_tags %}
+      <p class="tags">{% for t in meal.dietary_tags %}<span class="tag">{{ t|label }}</span>{% endfor %}</p>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}

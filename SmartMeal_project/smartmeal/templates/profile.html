@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}{{ _('New profile') if is_new else _('Profile') }}{% endblock %}
+{% block content %}
+<div class="profile-head">
+  {% if not is_new %}{{ avatar_img(user, 72) }}{% endif %}
+  <h1>{{ _('Create a profile') if is_new else _("{name}'s profile", name=user.name) }}</h1>
+</div>
+<div class="profile">
+  <form method="post" class="panel profile-form" action="{{ url_for('new_profile') if is_new else url_for('profile') }}">
+    <h2>{{ _('About you') }}</h2>
+    <p class="hint">{{ _('These are the static attributes of your user model. You set them, and the rules use them.') }}</p>
+    <div class="field"><label for="name">{{ _('Name') }}</label>
+      <input id="name" name="name" value="{{ user.name }}" required maxlength="60"></div>
+
+    <fieldset class="avatars"><legend>{{ _('Avatar') }}</legend>
+      {% for key in choices.avatars %}
+      <label class="avatar-choice" title="{{ _(avatar_labels[key]) }}">
+        <input type="radio" name="avatar" value="{{ key }}" {% if user.avatar == key %}checked{% endif %}>
+        <img src="{{ url_for('static', filename='images/avatars/' ~ key ~ '.svg') }}" alt="{{ _(avatar_labels[key]) }}" width="56" height="56">
+      </label>
+      {% endfor %}
+      <label class="avatar-choice" title="{{ _('Initial letter') }}">
+        <input type="radio" name="avatar" value="" {% if not user.avatar %}checked{% endif %}>
+        <span class="avatar avatar-letter" style="width:56px;height:56px">{{ (user.name or '?')[:1] }}</span>
+      </label>
+    </fieldset>
+
+    <div class="field-row">
+      <div class="field"><label for="dietary_goal">{{ _('Goal') }}</label>
+        <select id="dietary_goal" name="dietary_goal">{% for v in choices.goals %}<option value="{{ v }}" {% if user.dietary_goal == v %}selected{% endif %}>{{ v|label }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="budget_preference">{{ _('Usual budget') }}</label>
+        <select id="budget_preference" name="budget_preference">{% for v in choices.budgets %}<option value="{{ v }}" {% if user.budget_preference == v %}selected{% endif %}>{{ v|label }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="cooking_level">{{ _('Cooking level') }}</label>
+        <select id="cooking_level" name="cooking_level">{% for v in choices.levels %}<option value="{{ v }}" {% if user.cooking_level == v %}selected{% endif %}>{{ v|label }}</option>{% endfor %}</select></div>
+    </div>
+    <fieldset class="checks"><legend>{{ _('Food you enjoy') }}</legend>
+      {% for v in choices.foods %}<label class="chip"><input type="checkbox" name="food_preferences" value="{{ v }}" {% if v in user.food_preferences %}checked{% endif %}><span>{{ v|label }}</span></label>{% endfor %}
+    </fieldset>
+    <fieldset class="checks"><legend>{{ _('Meals you plan most often') }}</legend>
+      {% for v in choices.categories %}<label class="chip"><input type="checkbox" name="meal_types" value="{{ v }}" {% if v in user.meal_types %}checked{% endif %}><span>{{ v|label }}</span></label>{% endfor %}
+    </fieldset>
+    <fieldset class="checks"><legend>{{ _('Diet (always respected)') }}</legend>
+      {% for v in choices.restrictions %}<label class="chip"><input type="checkbox" name="restrictions" value="{{ v }}" {% if v in user.restrictions %}checked{% endif %}><span>{{ v|label }}</span></label>{% endfor %}
+    </fieldset>
+
+    <h2 class="form-sec">{{ _('Health') }}</h2>
+    <p class="hint">{{ _("Choose as many as apply. Meals that do not respect these settings are never suggested. The limits are general guidelines, not medical advice: follow your doctor's recommendations.") }}</p>
+    <fieldset class="checks"><legend>{{ _('Health conditions') }}</legend>
+      {% for v in choices.health %}<label class="chip chip-health"><input type="checkbox" name="health_conditions" value="{{ v }}" {% if v in user.health_conditions %}checked{% endif %}><span>{{ v|label }}</span></label>{% endfor %}
+    </fieldset>
+    <fieldset class="checks"><legend>{{ _('Allergies and foods to avoid') }}</legend>
+      {% for v in choices.allergens %}<label class="chip chip-health"><input type="checkbox" name="allergies" value="{{ v }}" {% if v in user.allergies %}checked{% endif %}><span>{{ v|label }}</span></label>{% endfor %}
+    </fieldset>
+
+    <h2 class="form-sec">{{ _('Body data') }} <span class="optional">{{ _('optional') }}</span></h2>
+    <p class="hint">{{ _('Fill in what you know. With age, height and weight (or weight and body fat), SmartMeal estimates your energy and protein needs and uses them to rank meals.') }}</p>
+    <div class="field-row">
+      <div class="field"><label for="age">{{ _('Age') }}</label>
+        <input id="age" name="age" type="number" min="14" max="100" step="1" inputmode="numeric" value="{{ user.age if user.age is not none }}"></div>
+      <div class="field"><label for="sex">{{ _('Sex') }}</label>
+        <select id="sex" name="sex"><option value="">{{ _('Prefer not to say') }}</option>{% for v in choices.sexes %}<option value="{{ v }}" {% if user.sex == v %}selected{% endif %}>{{ v|label }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="activity_level">{{ _('Activity') }}</label>
+        <select id="activity_level" name="activity_level">{% for v in choices.activities %}<option value="{{ v }}" {% if user.activity_level == v %}selected{% endif %}>{{ ('activity_' ~ v)|label }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label for="height_cm">{{ _('Height (cm)') }}</label>
+        <input id="height_cm" name="height_cm" type="number" min="120" max="230" step="0.5" inputmode="decimal" value="{{ '%g'|format(user.height_cm) if user.height_cm is not none }}"></div>
+      <div class="field"><label for="weight_kg">{{ _('Weight (kg)') }}</label>
+        <input id="weight_kg" name="weight_kg" type="number" min="30" max="300" step="0.1" inputmode="decimal" value="{{ '%g'|format(user.weight_kg) if user.weight_kg is not none }}"></div>
+      <div class="field"><label for="body_fat_pct">{{ _('Body fat (%)') }}</label>
+        <input id="body_fat_pct" name="body_fat_pct" type="number" min="3" max="70" step="0.5" inputmode="decimal" value="{{ '%g'|format(user.body_fat_pct) if user.body_fat_pct is not none }}"></div>
+    </div>
+    <button class="btn btn-primary" type="submit">{{ _('Create profile') if is_new else _('Save profile') }}</button>
+  </form>
+
+  {% if not is_new %}
+  {% set p = user.performance %}
+  <div class="side-stack">
+  {% set m = user.metrics %}
+  <section class="panel">
+    <h2>{{ _('Your estimated needs') }}</h2>
+    {% if m.daily_kcal_target or m.bmi or m.protein_target_g %}
+    <dl class="stats">
+      {% if m.bmi %}<div><dt>{{ _('Body mass index') }}</dt><dd>{{ m.bmi }}</dd></div>{% endif %}
+      {% if m.daily_kcal_target %}<div><dt>{{ _('Energy per day for your goal') }}</dt><dd>≈ {{ m.daily_kcal_target }} kcal</dd></div>{% endif %}
+      {% if m.protein_target_g %}<div><dt>{{ _('Protein per day for your goal') }}</dt><dd>≈ {{ m.protein_target_g }} {{ _('g') }}</dd></div>{% endif %}
+      {% if m.daily_kcal_target %}{% for c in choices.categories %}<div><dt>{{ _('Target for:') }} {{ c|label }}</dt><dd>≈ {{ (m.daily_kcal_target * meal_share[c])|round|int }} kcal</dd></div>{% endfor %}{% endif %}
+    </dl>
+    <p class="hint">{% if m.method %}{{ _('Calculated with the {method} formula, your activity level and your goal.', method=_(m.method)) }} {% endif %}{{ _('These are rough estimates used to rank meals, not a diet prescription.') }}</p>
+    {% else %}
+    <p class="empty">{{ _('Add your age, height and weight to get personal calorie and protein targets.') }}</p>
+    {% endif %}
+  </section>
+  <section class="panel">
+    <h2>{{ _('What SmartMeal has learned') }}</h2>
+    <p class="hint">{{ _('Dynamic attributes. They are recomputed with SQL after every interaction and every session.') }}</p>
+    <dl class="stats">
+      <div><dt>{{ _('Meals viewed') }}</dt><dd>{{ p.meals_viewed }}</dd></div>
+      <div><dt>{{ _('Meals chosen') }}</dt><dd>{{ p.meals_selected }}</dd></div>
+      <div><dt>{{ _('Meals saved') }}</dt><dd>{{ p.meals_saved }}</dd></div>
+      <div><dt>{{ _('Opened from recommendations') }}</dt><dd>{{ p.recommendation_clicks }}</dd></div>
+      <div><dt>{{ _('Favourite category') }}</dt><dd>{{ p.top_category|label if p.top_category else _('none yet') }}</dd></div>
+      <div><dt>{{ _('Vegetarian share of choices') }}</dt><dd>{{ (p.vegetarian_ratio * 100)|round|int }}%</dd></div>
+      <div><dt>{{ _('High-protein share') }}</dt><dd>{{ (p.high_protein_ratio * 100)|round|int }}%</dd></div>
+      <div><dt>{{ _('Quick-meal share') }}</dt><dd>{{ (p.quick_meal_ratio * 100)|round|int }}%</dd></div>
+      <div><dt>{{ _('Sessions') }}</dt><dd>{{ p.sessions_count }}</dd></div>
+      <div><dt>{{ _('Sessions in the last 7 days') }}</dt><dd>{{ p.interaction_frequency }}</dd></div>
+      <div><dt>{{ _('Average session') }}</dt><dd>{{ p.avg_session_minutes }} {{ _('min') }}</dd></div>
+      <div><dt>{{ _('Last active') }}</dt><dd>{{ p.last_active or _('never') }}</dd></div>
+    </dl>
+  </section>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

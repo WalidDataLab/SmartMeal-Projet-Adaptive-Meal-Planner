@@ -1,0 +1,262 @@
+[
+  {
+    "id": 1,
+    "name": "Greek Yogurt Protein Bowl",
+    "category": "breakfast",
+    "ingredients": [
+      "greek yogurt",
+      "granola",
+      "mixed berries",
+      "honey",
+      "chia seeds"
+    ],
+    "prep_time": 5,
+    "vegetarian": true,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "balanced"
+    ],
+    "description": "Thick Greek yogurt topped with crunchy granola, fresh berries and a drizzle of honey.",
+    "image": "meals/meal_01.svg",
+    "cost_eur": 3.5,
+    "nutrition": {
+      "calories_kcal": 390,
+      "protein_g": 24,
+      "carbs_g": 48,
+      "sugar_g": 28,
+      "fat_g": 11,
+      "sat_fat_g": 4,
+      "fiber_g": 6,
+      "salt_g": 0.3,
+      "cholesterol_mg": 20
+    },
+    "allergens": [
+      "dairy",
+      "gluten"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Spinach & Feta Omelette",
+    "category": "breakfast",
+    "ingredients": [
+      "eggs",
+      "baby spinach",
+      "feta",
+      "olive oil",
+      "black pepper"
+    ],
+    "prep_time": 10,
+    "vegetarian": true,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "veggie_rich",
+      "gluten_free"
+    ],
+    "description": "A fluffy three-egg omelette folded around wilted spinach and crumbled feta.",
+    "image": "meals/meal_02.svg",
+    "cost_eur": 2.9,
+    "nutrition": {
+      "calories_kcal": 330,
+      "protein_g": 24,
+      "carbs_g": 4,
+      "sugar_g": 2,
+      "fat_g": 24,
+      "sat_fat_g": 9,
+      "fiber_g": 2,
+      "salt_g": 1.6,
+      "cholesterol_mg": 580
+    },
+    "allergens": [
+      "eggs",
+      "dairy"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Overnight Oats with Banana",
+    "category": "breakfast",
+    "ingredients": [
+      "rolled oats",
+      "milk",
+      "banana",
+      "peanut butter",
+      "cinnamon"
+    ],
+    "prep_time": 5,
+    "vegetarian": true,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "balanced",
+      "high_fiber"
+    ],
+    "description": "Oats soaked overnight in milk with banana and peanut butter. Ready when you wake up.",
+    "image": "meals/meal_03.svg",
+    "cost_eur": 1.8,
+    "nutrition": {
+      "calories_kcal": 450,
+      "protein_g": 17,
+      "carbs_g": 62,
+      "sugar_g": 20,
+      "fat_g": 15,
+      "sat_fat_g": 3.5,
+      "fiber_g": 8,
+      "salt_g": 0.3,
+      "cholesterol_mg": 10
+    },
+    "allergens": [
+      "gluten",
+      "dairy",
+      "peanuts"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Avocado Toast with Poached Egg",
+    "category": "breakfast",
+    "ingredients": [
+      "sourdough bread",
+      "avocado",
+      "egg",
+      "lemon",
+      "chili flakes"
+    ],
+    "prep_time": 12,
+    "vegetarian": true,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "balanced",
+      "spicy"
+    ],
+    "description": "Toasted sourdough with smashed avocado, a soft poached egg and a pinch of chili.",
+    "image": "meals/meal_04.svg",
+    "cost_eur": 4.2,
+    "nutrition": {
+      "calories_kcal": 380,
+      "protein_g": 15,
+      "carbs_g": 34,
+      "sugar_g": 3,
+      "fat_g": 21,
+      "sat_fat_g": 4,
+      "fiber_g": 9,
+      "salt_g": 1.1,
+      "cholesterol_mg": 185
+    },
+    "allergens": [
+      "gluten",
+      "eggs"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Smoked Salmon Bagel",
+    "category": "breakfast",
+    "ingredients": [
+      "bagel",
+      "smoked salmon",
+      "cream cheese",
+      "capers",
+      "red onion"
+    ],
+    "prep_time": 8,
+    "vegetarian": false,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "fish"
+    ],
+    "description": "A toasted bagel layered with cream cheese, smoked salmon, capers and red onion.",
+    "image": "meals/meal_05.svg",
+    "cost_eur": 8.8,
+    "nutrition": {
+      "calories_kcal": 470,
+      "protein_g": 27,
+      "carbs_g": 50,
+      "sugar_g": 7,
+      "fat_g": 17,
+      "sat_fat_g": 7,
+      "fiber_g": 3,
+      "salt_g": 3.4,
+      "cholesterol_mg": 55
+    },
+    "allergens": [
+      "gluten",
+      "fish",
+      "dairy"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Tofu Scramble with Peppers",
+    "category": "breakfast",
+    "ingredients": [
+      "firm tofu",
+      "bell peppers",
+      "onion",
+      "turmeric",
+      "spinach"
+    ],
+    "prep_time": 15,
+    "vegetarian": true,
+    "difficulty": "easy",
+    "dietary_tags": [
+      "veggie_rich",
+      "vegan",
+      "gluten_free",
+      "dairy_free"
+    ],
+    "description": "Golden turmeric tofu scrambled with sweet peppers and spinach.",
+    "image": "meals/meal_06.svg",
+    "cost_eur": 3.2,
+    "nutrition": {
+      "calories_kcal": 290,
+      "protein_g": 22,
+      "carbs_g": 12,
+      "sugar_g": 6,
+      "fat_g": 17,
+      "sat_fat_g": 2.5,
+      "fiber_g": 5,
+      "salt_g": 0.6,
+      "cholesterol_mg": 0
+    },
+    "allergens": [
+      "soy"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Banana Oat Protein Pancakes",
+    "category": "breakfast",
+    "ingredients": [
+      "rolled oats",
+      "eggs",
+      "banana",
+      "greek yogurt",
+      "baking powder"
+    ],
+    "prep_time": 20,
+    "vegetarian": true,
+    "difficulty": "medium",
+    "dietary_tags": [
+      "balanced"
+    ],
+    "description": "Blender pancakes made from oats, eggs and banana, served with yogurt.",
+    "image": "meals/meal_07.svg",
+    "cost_eur": 3.8,
+    "nutrition": {
+      "calories_kcal": 480,
+      "protein_g": 28,
+      "carbs_g": 60,
+      "sugar_g": 18,
+      "fat_g": 13,
+      "sat_fat_g": 4,
+      "fiber_g": 6,
+      "salt_g": 0.8,
+      "cholesterol_mg": 380
+    },
+    "allergens": [
+      "gluten",
+      "eggs",
+      "dairy"
+    ]
+  }
+]
